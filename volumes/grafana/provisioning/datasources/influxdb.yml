@@ -1,0 +1,17 @@
+apiVersion: 1
+
+datasources:
+  - name: InfluxDB
+    type: influxdb
+    access: proxy
+    url: http://${PBW_INFLUXDB_NAME}:8086
+    orgId: 1
+    version: 2
+    isDefault: true
+    editable: true
+    jsonData:
+      version: Flux
+      organization: ${PBW_INFLUXDB_ORG}
+      defaultBucket: ${PBW_INFLUXDB_BUCKET}
+    secureJsonData:
+      token: ${PBW_INFLUXDB_ADMIN_TOKEN}

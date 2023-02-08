@@ -1,0 +1,39 @@
+version: "3"
+services:
+  influxdb:
+    image: influxdb:latest
+    hostname: ${PBW_INFLUXDB_NAME:-pbw_influxdb}
+    container_name: ${PBW_INFLUXDB_NAME:-pbw-influxdb}
+    ports:
+      - "${PBW_INFLUXDB_PORT:-8086}:8086"
+    volumes:
+      - type: bind
+        source: ./volumes/influxdb/data
+        target: /var/lib/influxdb
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=${PBW_INFLUXDB_INIT_MODE:-setup}
+      - DOCKER_INFLUXDB_INIT_USERNAME=${PBW_INFLUXDB_USERNAME:-admin}
+      - DOCKER_INFLUXDB_INIT_PASSWORD=${PBW_INFLUXDB_PASSWORD:-password}
+      - DOCKER_INFLUXDB_INIT_ORG=${PBW_INFLUXDB_ORG:-pbw}
+      - DOCKER_INFLUXDB_INIT_BUCKET=${PBW_INFLUXDB_BUCKET:-pbw}
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${PBW_INFLUXDB_ADMIN_TOKEN:-pbw}
+  grafana:
+    image: grafana/grafana:latest
+    hostname: ${PBW_GRAFANA_NAME:-pbw-grafana}
+    container_name: ${PBW_GRAFANA_NAME:-pbw-grafana}
+    environment:
+      - GF_INSTALL_PLUGINS=grafana-polystat-panel,bessler-pictureit-panel,marcuscalidus-svg-panel
+      - PBW_INFLUXDB_NAME=${PBW_INFLUXDB_NAME:-pbw-influxdb}
+      - PBW_INFLUXDB_ORG=${PBW_INFLUXDB_ORG:-pbw}
+      - PBW_INFLUXDB_BUCKET=${PBW_INFLUXDB_BUCKET:-pbw}
+      - PBW_INFLUXDB_ADMIN_TOKEN=${PBD_INFLUXDB_ADMIN_TOKEN:-pbw}
+    ports:
+      - "${PBW_GRAFANA_PORT:-8085}:3000"
+    volumes:
+      - type: bind
+        source: ./volumes/grafana/provisioning
+        target: /etc/grafana/provisioning
+    links:
+      - influxdb
+    depends_on:
+      - influxdb
