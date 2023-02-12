@@ -8,8 +8,8 @@ services:
       - "${PBW_INFLUXDB_PORT:-8086}:8086"
     volumes:
       - type: bind
-        source: ./volumes/influxdb/data
-        target: /var/lib/influxdb
+        source: ./volumes/influxdb2
+        target: /var/lib/influxdb2
     environment:
       - DOCKER_INFLUXDB_INIT_MODE=${PBW_INFLUXDB_INIT_MODE:-setup}
       - DOCKER_INFLUXDB_INIT_USERNAME=${PBW_INFLUXDB_USERNAME:-admin}
